@@ -7,6 +7,7 @@ function App() {
   const [tiredness, setTiredness] = useState(0);
   const [miner, setMiner] = useState(1);
   const [marketPrice, setMaketPrice] = useState(5);
+  const [minerPrice, setMinerPrice] = useState(500)
   const [money, setMoney] = useState(0);
   const ressourceTimerRef = useRef(null);
 
@@ -18,8 +19,8 @@ function App() {
     }
 
     ressourceTimerRef.current = setInterval(() => {
-      setRessource((current) => Math.max(0, current - randomFunction(4, 5)));
-    }, 2000);
+      setRessource((current) => Math.max(0, current - Math.round(randomFunction(4, 5) * (miner / 1.4))));
+    }, 3000);
 
     return () => {
       if (ressourceTimerRef.current) {
@@ -27,7 +28,7 @@ function App() {
         ressourceTimerRef.current = null;
       }
     };
-  }, []);
+  }, [miner]);
 
   useEffect(() => {
     if (mineral >= 50) {
@@ -49,20 +50,23 @@ function App() {
 
   const handleClick = () => {
     {ressource != 0 ? setMineral((current) => current + miner) : setMineral((current) => current + 1)}
-    setTiredness((current) => current + randomFunction(3, 4))
+    setTiredness((current) => current + (randomFunction(3, 4) * Math.round(miner / 1.33)));
   };
 
   const handleRessource = () => {
-    setRessource((current) => current + 10);
+    setRessource((current) => current + 20);
+    setMoney((current) => current - 7);
   }
 
   const handleSell = () => {
-    setMoney(marketPrice * mineral);
+    setMoney(money + marketPrice * mineral);
     setMineral(0)
   }
 
   const addMiner = () => {
     setMiner((current) => current + 1)
+    setMoney((current) => current - minerPrice)
+    setMinerPrice((current) => current + 200)
   }
 
   return (
@@ -84,7 +88,8 @@ function App() {
       {unlockMiner && (
         <h1>
           Miners hired : {miner - 1}
-          <button onClick={addMiner}>Hire miner</button>
+          <button onClick={addMiner} disabled={money < minerPrice}>Hire miner</button>
+          : {minerPrice}$
         </h1>
       )}
       <h1>
