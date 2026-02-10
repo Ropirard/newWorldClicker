@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 function App() {
   const [mineral, setMineral] = useState(0);
-  const [ressource, setRessource] = useState(100);
+  const [ressource, setRessource] = useState(10);
   const [tiredness, setTiredness] = useState(0);
   const [miner, setMiner] = useState(1);
   const [marketPrice, setMaketPrice] = useState(5);
@@ -18,7 +18,7 @@ function App() {
     }
 
     ressourceTimerRef.current = setInterval(() => {
-      setRessource((current) => current - randomFunction(4, 5));
+      setRessource((current) => Math.max(0, current - randomFunction(4, 5)));
     }, 2000);
 
     return () => {
@@ -48,7 +48,7 @@ function App() {
   }
 
   const handleClick = () => {
-    setMineral((current) => current + miner)
+    {ressource != 0 ? setMineral((current) => current + miner) : setMineral((current) => current + 1)}
     setTiredness((current) => current + randomFunction(3, 4))
   };
 
