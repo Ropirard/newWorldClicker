@@ -1,14 +1,33 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function App() {
   const [mineral, setMineral] = useState(0);
-  const [miner, setMiner] = useState(1);
+  const [ressource, setRessource] = useState(100);
   const [tiredness, setTiredness] = useState(0);
-  const [marketPrice, setMaketPrice] = useState(5)
-  const [money, setMoney] = useState(0)
+  const [miner, setMiner] = useState(1);
+  const [marketPrice, setMaketPrice] = useState(5);
+  const [money, setMoney] = useState(0);
+  const ressourceTimerRef = useRef(null);
 
   const [unlockMiner, setUnlockMiner] = useState(false)
+
+  useEffect(() => {
+    if (ressourceTimerRef.current) {
+      clearInterval(ressourceTimerRef.current);
+    }
+
+    ressourceTimerRef.current = setInterval(() => {
+      setRessource((current) => current - randomFunction(4, 5));
+    }, 2000);
+
+    return () => {
+      if (ressourceTimerRef.current) {
+        clearInterval(ressourceTimerRef.current);
+        ressourceTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (mineral >= 50) {
@@ -29,9 +48,13 @@ function App() {
   }
 
   const handleClick = () => {
-    setMineral(mineral + miner)
-    setTiredness(tiredness + randomFunction(3, 4))
+    setMineral((current) => current + miner)
+    setTiredness((current) => current + randomFunction(3, 4))
   };
+
+  const handleRessource = () => {
+    setRessource((current) => current + 10);
+  }
 
   const handleSell = () => {
     setMoney(marketPrice * mineral);
@@ -39,7 +62,7 @@ function App() {
   }
 
   const addMiner = () => {
-    setMiner(miner + 1)
+    setMiner((current) => current + 1)
   }
 
   return (
@@ -48,6 +71,10 @@ function App() {
       <h1>
         Minerals collected : {mineral}
         <button onClick={handleClick}>Collect</button>
+      </h1>
+      <h1>
+        Ressources : {ressource}
+        <button onClick={handleRessource}>Feed the worker</button>
       </h1>
       {/** Level of fatigue */}
       <h1>
