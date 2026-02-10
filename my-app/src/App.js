@@ -1,17 +1,28 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [mineral, setMineral] = useState(0);
   const [miner, setMiner] = useState(1);
   const [tiredness, setTiredness] = useState(0);
+  const [unlockMiner, setUnlockMiner] = useState(false)
+
+  useEffect(() => {
+    if (mineral >= 50) {
+      setUnlockMiner(true);
+    }
+  })
 
   function randomTiredness(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  const handleDelete = () => {
+    setMineral(mineral - 1)
+  }
+
   const handleClick = () => {
-    setCount(count + miner)
+    setMineral(mineral + miner)
     setTiredness(tiredness + randomTiredness(3, 4))
   };
 
@@ -22,16 +33,19 @@ function App() {
   return (
     <>
       <h1>
-        Minerals collected : {count}
+        Minerals collected : {mineral}
         <button onClick={handleClick}>Collect</button>
-      </h1>
-      <h1>
-        Miners hired : {miner - 1}
-        <button onClick={addMiner}>Hire miner</button>
+        <button onClick={handleDelete}>Throw</button>
       </h1>
       <h1>
         Tiredness : {tiredness/10}%
       </h1>
+      {unlockMiner && (
+        <h1>
+          Miners hired : {miner - 1}
+          <button onClick={addMiner}>Hire miner</button>
+        </h1>
+      )}
     </>
   )
   
